@@ -1,0 +1,11 @@
+# Request: Path to analyze for clearance metrics using floor-level costmaps
+nav_msgs/Path path                    # Input path to analyze
+string[] floor_names                  # Floor names for each segment
+uint32[] segment_start_indices        # Start indices for each segment (inclusive)
+uint32[] segment_end_indices          # End indices for each segment (inclusive)
+---
+# Response: Clearance metrics or error message
+bool success                          # True if calculation succeeded
+string message                        # Status or error message
+float64 min_clearance                 # Overall minimum clearance across all segments (meters)
+float64 avg_clearance                 # Overall average clearance across all segments (meters)

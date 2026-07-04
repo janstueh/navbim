@@ -1,5 +1,5 @@
 # This dockerfile can be configured via --build-arg
-# Build context must be the /navigation2 root folder for COPY.
+# Build context must be the /navbim root folder for COPY.
 # Example build command:
 # export UNDERLAY_MIXINS="debug ccache lld"
 # export OVERLAY_MIXINS="debug ccache coverage-gcc lld"
@@ -22,7 +22,7 @@ RUN vcs import ./ < ../underlay.repos
 # copy overlay source
 ARG OVERLAY_WS
 WORKDIR $OVERLAY_WS/src
-COPY ./ ./navigation2
+COPY ./ ./navbim
 
 # copy manifests for caching
 WORKDIR /opt
@@ -53,11 +53,15 @@ RUN apt-get update && \
       ccache \
       lcov \
       lld \
+      nlohmann-json3-dev \
       python3-pip \
+      ros-$ROS_DISTRO-ament-index-cpp \
       ros-$ROS_DISTRO-rmw-fastrtps-cpp \
       ros-$ROS_DISTRO-rmw-connextdds \
       ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
+      ros-$ROS_DISTRO-rmw-zenoh-cpp \
     && pip3 install --break-system-packages \
+      "setuptools<80" \
       fastcov \
       git+https://github.com/ruffsl/colcon-cache.git@a937541bfc496c7a267db7ee9d6cceca61e470ca \
       git+https://github.com/ruffsl/colcon-clean.git@a7f1074d1ebc1a54a6508625b117974f2672f2a9 \
@@ -72,10 +76,11 @@ ENV UNDERLAY_WS $UNDERLAY_WS
 WORKDIR $UNDERLAY_WS
 COPY --from=cacher /tmp/$UNDERLAY_WS ./
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    apt-get update && rosdep install -q -y \
+  apt-get update && rosdep install -q -y \
       --from-paths src \
       --skip-keys " \
         slam_toolbox \
+        nlohmann_json \
         " \
       --ignore-src \
     && rm -rf /var/lib/apt/lists/*
@@ -85,8 +90,7 @@ COPY --from=cacher $UNDERLAY_WS ./
 ARG UNDERLAY_MIXINS="release ccache lld"
 ARG CCACHE_DIR="$UNDERLAY_WS/.ccache"
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    colcon cache lock && \
-    colcon build \
+  colcon build \
       --symlink-install \
       --mixin $UNDERLAY_MIXINS \
       --event-handlers console_direct+
@@ -98,12 +102,29 @@ WORKDIR $OVERLAY_WS
 COPY --from=cacher /tmp/$OVERLAY_WS ./
 
 RUN . $UNDERLAY_WS/install/setup.sh && \
-    apt-get update && rosdep install -q -y \
+  apt-get update && rosdep install -q -y \
       --from-paths src \
       --skip-keys " \
         slam_toolbox \
+        nlohmann_json \
         "\
       --ignore-src \
+    && pip3 install --break-system-packages --ignore-installed \
+      "setuptools<80" \
+      "numpy>=2.0,<3" \
+      "scipy>=1.13.0" \
+      "shapely>=2.0.0" \
+      "matplotlib>=3.8.0" \
+      "open3d>=0.18.0" \
+      "dash==4.3.0" \
+      "plotly==6.8.0" \
+      "ifcopenshell==0.8.5" \
+      "ladybug-geometry-polyskel==1.7.50" \
+    && curl -sSL "https://github.com/IfcOpenShell/IfcOpenShell/releases/download/ifcconvert-0.8.5/ifcconvert-0.8.5-linux64.zip" \
+      -o /tmp/ifcconvert.zip \
+    && python3 -c "import zipfile; zipfile.ZipFile('/tmp/ifcconvert.zip').extract('IfcConvert', '/usr/local/bin')" \
+    && chmod +x /usr/local/bin/IfcConvert \
+    && rm /tmp/ifcconvert.zip \
     && rm -rf /var/lib/apt/lists/*
 
 # multi-stage for testing
@@ -114,8 +135,7 @@ COPY --from=cacher $OVERLAY_WS ./
 ARG OVERLAY_MIXINS="release ccache lld"
 ARG CCACHE_DIR="$OVERLAY_WS/.ccache"
 RUN . $UNDERLAY_WS/install/setup.sh && \
-    colcon cache lock && \
-    colcon build \
+  colcon build \
       --symlink-install \
       --mixin $OVERLAY_MIXINS
 
@@ -168,7 +188,7 @@ RUN mkdir -p $ROOT_SRV
 
 # install demo dependencies
 RUN apt-get update && apt-get install -y \
-      ros-$ROS_DISTRO-rviz2 
+      ros-$ROS_DISTRO-rviz2
 
 # install gzweb dependacies
 RUN apt-get install -y --no-install-recommends \

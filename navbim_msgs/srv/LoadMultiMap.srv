@@ -1,0 +1,10 @@
+# Load a new map into the multimap server
+# Request
+string map_url        # Path to the map YAML file to load
+string ns             # Namespace/environment name for the map
+string map_name       # Desired name for the map within the environment
+string global_frame   # Global coordinate frame (ignored if environment exists)
+---
+# Response
+bool success          # Whether the operation succeeded
+string msg           # Status message

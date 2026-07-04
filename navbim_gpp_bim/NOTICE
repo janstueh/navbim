@@ -1,0 +1,3 @@
+This package is based on the nav2_planner package (https://github.com/ros-navigation/navigation2/tree/main/nav2_planner, licensed under the Apache License 2.0).
+Modifications made by Jan Stührenberg:
+ - Added multimap functionality

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>navbim_gpp_bim</name>
+  <version>0.0.0</version>
+  <description>Global path planning using building information models</description>
+  <maintainer email="jan.stuehrenberg@tuhh.de">Jan Stührenberg</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- Build dependencies for C++ components -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- C++ dependencies -->
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>backward_ros</depend>
+  <depend>nav2_common</depend>
+  <depend>nav2_util</depend>
+  <depend>nav2_core</depend>
+  <depend>nav2_costmap_2d</depend>
+  <depend>navbim_multi_costmap_2d</depend>
+  <depend>nav2_navfn_planner</depend>
+  <depend>nav2_theta_star_planner</depend>
+  <depend>nav_2d_msgs</depend>
+  <depend>navbim_smoother</depend>
+  <depend>pluginlib</depend>
+  <depend>tf2_ros</depend>
+  <depend>lifecycle_msgs</depend>
+  
+  <!-- Common message dependencies -->
+  <depend>navbim_msgs</depend>
+  <depend>navbim_util</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>nav2_msgs</depend>
+  <depend>visualization_msgs</depend>
+
+  <!-- Testing dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>

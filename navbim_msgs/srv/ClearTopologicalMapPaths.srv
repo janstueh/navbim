@@ -1,0 +1,11 @@
+# Service to clear all pre-planned paths from the topological map
+# Resets planned_distance, planned_cost, and path data for all transition edges
+# (except stair transitions which are kept as-is)
+
+# Request (empty)
+---
+
+# Response
+bool success              # Whether the clear operation was successful
+string message            # Status message or error description
+int32 edges_cleared       # Number of edges that were cleared

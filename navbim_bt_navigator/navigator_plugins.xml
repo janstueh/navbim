@@ -1,0 +1,9 @@
+<class_libraries>
+	<library path="navbim_navigate_to_pose_navigator">
+	  <class
+	  	type="navbim_bt_navigator::NavigateToPoseNavigator"
+	  	base_class_type="nav2_core::NavigatorBase">
+	    <description>Navigate to Pose Navigator</description>
+	  </class>
+	</library>
+</class_libraries>

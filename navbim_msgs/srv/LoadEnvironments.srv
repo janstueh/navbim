@@ -1,0 +1,7 @@
+# Load environments from a configuration file
+# Request
+string environments_url  # Path to the environments YAML configuration file
+---
+# Response
+bool success            # Whether the operation succeeded
+string msg             # Status message

@@ -1,0 +1,182 @@
+nav_model_gen:
+  ros__parameters:
+    delete_previous_maps: false            # Deletes all files (occupancy maps, topological map, etc.) before generating a new navigation model
+    "2D": true                             # true = Also creates 2D occupancy grid maps, false = only 3D voxel maps
+    generate_floor_maps: false             # Generates floor maps for each room (for comparison and visualization)
+    # Open3D visualization requires X11, may not work on Wayland
+    visualize_generation_of_floors: false  # Visualizes the generation of floor maps (generate_floor_maps must be True)
+    visualize_generation_of_rooms: false   # Visualizes the generation of room maps
+    export_meshes: true                    # Exports room meshes for visualization in RViz
+    mesh_export_format: ".dae"             # File format for exported meshes (e.g., .dae, .stl) for visualization in RViz
+    resolution: 0.1                        # meters
+    vertical_tolerance: 0.3                # meters
+    penalize_z_movement: 3.0               # Penalizes vertical movements with this factor
+    min_area: 2.0                          # square meters, prevents detection of very small rooms
+    robot_height: 0.6                      # meters
+    robot_step_height: 0.2                 # meters
+
+navbim_rviz_plugins:
+  ros__parameters:
+    elevate_start_goal: 0.1                # meters
+
+topomap_panel_node:
+  ros__parameters:
+    topomap_server:
+      elevate_markers: 0.1                 # meters - elevation of topological map markers
+
+room_tracker:
+  ros__parameters:
+    robot_frame: "base_link"
+    global_frame: "ifc"
+    update_frequency: 2.0                  # Hz - how often to check current room
+    topomap_server_timeout: 5.0            # seconds
+
+gpp_bim:
+  ros__parameters:
+    reuse_paths: true                      # Reuse paths from previous planning requests (stairs/ramps always reused)
+    pre_plan_paths: false                  # Automatically pre-plan all or all unplanned transition edges on startup
+    force_pre_plan_of_planned_paths: false # pre_plan_paths must be true, forces pre-planning of paths that have already been planned and saved
+    second_level_planner: "ThetaStar"      # Must match planner_plugins in room_planner_server
+                                           # Options: "GridBased" (NavfnPlanner), "ThetaStar" (ThetaStarPlanner), or "OMPL" (OMPLPlanner)
+    resolution: 0.1                        # Resolution of the occupancy maps in meters
+    penalize_z_movement: 3.0               # Penalizes vertical movements with this factor
+    prune_graph: true                      # Enable graph pruning to remove unnecessary nodes (set false to skip pruning)
+    visualize_pruned_graph: false          # Publish pruned graph for visualization (adds overhead, set false to save time)
+    pruning_cost_threshold: 10.0           # Skip pruning if estimated cost < threshold (faster for nearby goals)
+    robot_height: 0.6                      # meters
+    robot_width: 0.4                       # meters
+    robot_length: 0.6                      # meters
+    robot_step_height: 0.2                 # meters
+    use_two_level: true                    # Set to false for comparison against single-level planning
+    
+    # Floor-wide path smoothing parameters
+    enable_floor_smoothing: true           # Enable floor-level smoothing after full path is planned
+    floor_smoother_max_time: 0.5           # seconds - maximum time for floor-level smoothing
+    # Note: floor smoother type and sub-parameters are configured via room_planner_server's
+    # room_smoother_type and room_planner_smoother params (same smoother instance is reused)
+
+topomap_server:
+  ros__parameters:
+    global_frame: "ifc"                    # Frame for the topological map
+    save_at_shutdown: true                 # Save the topological map on node shutdown
+
+room_planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0       # Hz - expected planning frequency
+    costmap_update_timeout: 1.0            # seconds
+    planner_plugins: ["GridBased", "ThetaStar", "OMPL"]  # Available planners (only one used at a time)
+    
+    # NavFn Planner (A* and Dijkstra algorithms)
+    GridBased:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+      tolerance: 0.1
+      use_astar: true                      # true = A*, false = Dijkstra
+      allow_unknown: false
+    
+    # Theta* Planner (Any-angle path planning)
+    ThetaStar:
+      plugin: "nav2_theta_star_planner::ThetaStarPlanner"
+      tolerance: 0.1
+      how_many_corners: 8                  # Number of neighbors to consider (4 or 8)
+      w_euc_cost: 1.0                      # Weight for euclidean distance cost
+      w_traversal_cost: 3.0                # Weight for traversal cost through cells
+      allow_unknown: false                 # Allow planning through unknown space
+    
+    # OMPL Planner (Sample-based planners: BIT*, RRT*, etc.)
+    OMPL:
+      plugin: "navbim_gpp_bim::OMPLPlannerWrapper"
+      planner_type: "RRTConnect"           # Options: "BITstar", "RRTstar", "InformedRRTstar", "RRTConnect", "PRMstar"
+      planning_time: 2.0                   # Maximum planning time in seconds
+      stop_on_first_solution: true         # Stop when first solution found (Only works for non-optimizing planners e.g. RRTConnect)
+      simplify_solution: true              # Simplify the path after planning
+      range: 1.0                           # Maximum edge length for sampling (meters)
+      goal_bias: 0.1                       # Probability of sampling the goal (0.0-1.0)
+      interpolation_resolution: 0.1        # Path interpolation resolution (meters)
+      use_informed_sampling: true          # Use informed sampling (for informed planners)
+      lethal_cost_threshold: 200.0         # Cost above this is considered lethal
+      inscribed_cost_threshold: 200.0      # Inscribed radius cost threshold
+      allow_unknown: false                 # Allow planning through unknown space
+
+    # Room-level path smoothing parameters
+    enable_room_smoothing: false           # Enable/disable room-level path smoothing
+    room_smoother_type: "simple"           # Smoother type: "simple" or "savitzky_golay"
+    room_smoother_max_time: 0.5            # seconds - maximum time for room-level smoothing
+    
+    # SimpleSmoother parameters (used when smoother_type: "simple")
+    room_planner_smoother:
+      tolerance: 1.0e-6                    # Convergence tolerance
+      max_its: 500                         # Maximum iterations
+      w_data: 0.3                          # Weight for staying close to original path (lower = more smoothing)
+      w_smooth: 0.6                        # Weight for smoothness (higher = smoother curves)
+      do_refinement: true                  # Perform refinement passes
+      refinement_num: 5                    # Number of refinement passes
+      enforce_path_inversion: false        # Enforce path inversion handling
+    
+    # SavitzkyGolaySmoother parameters (used when smoother_type: "savitzky_golay")
+    # room_planner_smoother:
+    #   do_refinement: true                # Perform refinement passes
+    #   refinement_num: 2                  # Number of refinement passes
+    #   enforce_path_inversion: false      # Enforce path inversion handling
+    #   window_size: 7                     # Filter window size (must be odd, >= 3)
+    #   poly_order: 3                      # Polynomial order for fitting
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0            
+      publish_frequency: 1.0 
+      floor_update_frequency: 1.0 
+      global_frame: "ifc"
+      robot_base_frame: "base_link"
+      robot_radius: 0.2
+      resolution: 0.1
+      track_unknown_space: true
+      # MultiCostmap2DROS custom parameters
+      environments_topic: "environments"
+      map_topic_prefix: "maps"
+      current_room_topic: "current_room"
+      room_update_frequency: 5.0
+      elevate_costmaps: 0.1 # meters
+      
+      # Layer plugins configuration (applied to each room costmap)
+      plugins: ["static_layer", "inflation_layer"]
+      
+      # Static layer - loads occupancy grid maps for each room
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      
+      # Inflation layer - inflates obstacles to prevent robot from getting too close
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 2.5
+        inflation_radius: 0.3
+
+bt_navigator:
+  ros__parameters:
+    global_frame: "ifc"
+    robot_base_frame: "base_link"
+    odom_topic: "odom"
+    bt_loop_duration: 10
+    filter_duration: 0.3
+    default_server_timeout: 20
+    wait_for_service_timeout: 20000  # 20 seconds - allow time for bim_server (Python) to start and activate
+    introspection_mode: "disabled"
+    plugin_lib_names:
+      - navbim_path_planning_bt_nodes
+    navigators: ["navigate_to_pose"]
+    navigate_to_pose:
+      plugin: "navbim_bt_navigator::NavigateToPoseNavigator"
+      enable_groot_monitoring: false
+      groot_server_port: 1667
+      default_nav_to_pose_bt_xml: $(find-pkg-share navbim_bt_navigator)/behavior_trees/navbim_plan_to_pose.xml
+    bt_search_directories:
+      - $(find-pkg-share navbim_bt_navigator)/behavior_trees
+
+pose_to_tf_publisher:
+  ros__parameters:
+    start_pose_topic: "/navbim/initialpose"
+    map_frame: "map"
+    odom_frame: "odom"
+    base_frame: "base_link"
+

@@ -1,0 +1,11 @@
+# Request: IFC element GUID
+string guid
+
+---
+
+# Response: IFC element information
+bool success                    # Whether the element was found
+string message                  # Error message if success is false
+string element_type             # IFC element type (e.g., "IfcWall", "IfcDoor")
+string element_name             # Element name from IFC
+geometry_msgs/Pose pose         # Element origin and orientation in the "ifc" frame

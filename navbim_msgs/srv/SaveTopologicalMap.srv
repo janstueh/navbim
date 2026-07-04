@@ -1,0 +1,10 @@
+# Service to save the current topological map to disk
+# Used after batch updates to persist all changes at once
+
+# Request (empty - saves to default location)
+---
+
+# Response
+bool success              # Whether the save was successful
+string message            # Status message or error description
+string file_path          # Path where the map was saved

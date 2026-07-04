@@ -1,0 +1,7 @@
+# Service to check if a point is inside a specified room polygon
+geometry_msgs/Point point
+string room_name
+---
+bool is_inside
+bool success
+string message

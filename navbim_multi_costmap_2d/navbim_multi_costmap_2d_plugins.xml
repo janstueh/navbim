@@ -1,0 +1,5 @@
+<library path="navbim_multi_costmap_2d_plugins">
+  <class name="navbim_multi_costmap_2d/MultimapStaticLayer" type="navbim_multi_costmap_2d::MultimapStaticLayer" base_class_type="nav2_costmap_2d::Layer">
+    <description>Custom static layer that properly uses callback groups for subscriptions in multi-costmap environments</description>
+  </class>
+</library>

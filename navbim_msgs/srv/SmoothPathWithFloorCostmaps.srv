@@ -1,0 +1,11 @@
+# Request: Path to smooth using floor-level aggregated costmaps
+nav_msgs/Path path                    # Input path to smooth
+string[] floor_names                  # List of floor names the path traverses (in order)
+uint64[] segment_start_indices        # Start index of each segment (inclusive)
+uint64[] segment_end_indices          # End index of each segment (exclusive)
+float64 max_smoothing_time            # Maximum time to spend on smoothing (seconds)
+---
+# Response: Smoothed path or error message
+nav_msgs/Path smoothed_path           # Smoothed output path
+bool success                          # True if smoothing succeeded
+string message                        # Status or error message

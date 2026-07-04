@@ -1,0 +1,7 @@
+# Request: Get all transition nodes adjacent to a given room node
+string room_name
+---
+# Response
+bool success
+string message
+navbim_msgs/TopomapNodes transition_nodes

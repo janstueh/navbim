@@ -1,0 +1,5 @@
+# Service to load a topological map from file
+string filename
+---
+bool success
+string message

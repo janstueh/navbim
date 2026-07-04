@@ -1,0 +1,7 @@
+# Request: Get the complete topological map
+# Empty request - returns the currently loaded map
+---
+# Response
+bool success
+string message
+navbim_msgs/Topomap topomap

@@ -1,0 +1,5 @@
+# Service to get all room nodes from the topological map
+---
+navbim_msgs/TopomapNodes nodes
+bool success
+string message

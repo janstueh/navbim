@@ -1,0 +1,15 @@
+<library path="navbim_rviz_plugins">
+
+  <class name="BIM Panel"
+         type="navbim_rviz_plugins::BimPanel"
+         base_class_type="rviz_common::Panel">
+        <description>The navbim rviz panel for visualizing building information models</description>
+  </class>
+  
+  <class name="Topological Map Panel"
+         type="navbim_rviz_plugins::TopomapPanel"
+         base_class_type="rviz_common::Panel">
+        <description>Panel for controlling topological map visualization with interactive markers for nodes and edges</description>
+  </class>
+  
+</library>

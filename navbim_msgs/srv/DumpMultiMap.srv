@@ -1,0 +1,8 @@
+# Unload a map from a specific environment
+# Request
+string ns           # Namespace/environment name
+string map_name     # Name of the map to unload
+---
+# Response
+bool success        # Whether the operation succeeded
+string msg         # Status message

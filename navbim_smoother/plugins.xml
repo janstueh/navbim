@@ -1,0 +1,13 @@
+<class_libraries>
+  <library path="navbim_simple_smoother">
+    <class type="navbim_smoother::SimpleSmoother" base_class_type="nav2_core::Smoother">
+      <description>Does a simple smoothing process with collision checking</description>
+    </class>
+  </library>
+
+  <library path="navbim_savitzky_golay_smoother">
+    <class type="navbim_smoother::SavitzkyGolaySmoother" base_class_type="nav2_core::Smoother">
+      <description>Does Savitzky-Golay smoothing</description>
+    </class>
+  </library>
+</class_libraries>

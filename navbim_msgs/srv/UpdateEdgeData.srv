@@ -1,0 +1,16 @@
+# Service to update planned path data for a topological map edge
+# Used when reuse_paths is enabled to cache planned paths
+
+# Request: Edge identification and planned data
+int32 source_id           # Node ID of source vertex
+int32 target_id           # Node ID of target vertex
+float64 planned_distance  # Planned Euclidean distance in meters
+float64 planned_cost      # Planned total cost (with penalties)
+nav_msgs/Path path        # Planned path through the edge
+bool defer_save false     # If true, don't save the graph immediately (batch mode)
+
+---
+
+# Response
+bool success              # Whether the update was successful
+string message            # Status message or error description

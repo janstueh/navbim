@@ -1,0 +1,34 @@
+#goal definition
+geometry_msgs/PoseStamped goal
+geometry_msgs/PoseStamped start
+string planner_id
+string room_name
+string floor_name
+bool use_start # If false, use current robot pose as path start, if true, use start above instead
+---
+#result definition
+
+# Error codes
+# Note: The expected priority order of the errors should match the message order
+uint16 NONE=0
+uint16 UNKNOWN=200
+uint16 INVALID_PLANNER=201
+uint16 ROOM_NOT_FOUND=202
+uint16 MAP_NOT_AVAILABLE=203
+uint16 TF_ERROR=204
+uint16 START_OUTSIDE_MAP=205
+uint16 GOAL_OUTSIDE_MAP=206
+uint16 START_OCCUPIED=207
+uint16 GOAL_OCCUPIED=208
+uint16 TIMEOUT=209
+uint16 NO_VALID_PATH=210
+
+nav_msgs/Path path
+builtin_interfaces/Duration planning_time
+float64 path_distance  # Euclidean distance along the path in meters
+float64 path_cost      # Total accumulated costmap cost along the path
+uint16 error_code
+string error_msg
+string warnings        # Non-fatal warnings (e.g., smoothing failures)
+---
+#feedback definition

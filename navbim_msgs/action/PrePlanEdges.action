@@ -1,0 +1,27 @@
+# Goal
+# If true, replan all transition edges (except stairs)
+# If false, only plan edges without existing plans (planned_cost < 0)
+bool force_replan
+
+---
+
+# Result
+bool success
+string message
+int32 total_edges           # Total edges considered for planning
+int32 edges_planned         # Successfully planned edges
+int32 edges_failed          # Failed to plan
+int32 edges_skipped         # Already had plans (if not force_replan) or stairs
+float64 total_planning_time # Total time in seconds
+string[] failed_edge_ids    # IDs of edges that failed (for retry/debugging)
+
+---
+
+# Feedback
+int32 current_edge_index    # Current edge being processed (1-based)
+int32 total_edges           # Total edges to process
+string current_edge_id      # ID of current edge being planned
+string status               # Human-readable status message
+float64 percent_complete    # Progress: 0.0 to 100.0
+int32 edges_completed       # Edges successfully completed so far
+int32 edges_failed_so_far   # Failed edges so far

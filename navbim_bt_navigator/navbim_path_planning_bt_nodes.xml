@@ -1,0 +1,11 @@
+<root BTCPP_format="4">
+  <!-- Path Planning BT Nodes -->
+  <TreeNodesModel>
+    <Action ID="NavbimComputePathToPose">
+      <input_port name="goal">Goal pose</input_port>
+      <input_port name="start">Start pose (optional)</input_port>
+      <input_port name="planner_id">Planner plugin ID</input_port>
+      <output_port name="path">Computed path</output_port>
+    </Action>
+  </TreeNodesModel>
+</root>

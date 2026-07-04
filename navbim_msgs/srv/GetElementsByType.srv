@@ -1,0 +1,14 @@
+# Request: Query all elements of a specific type building-wide
+string element_type             # IFC element type (e.g., "IfcDoor", "IfcWall")
+
+---
+
+# Response: List of all elements of the requested type
+bool success                    # Whether the query was successful
+string message                  # Error message if success is false
+
+# Element information
+string[] guids                  # List of element GUIDs
+string[] names                  # List of element names
+string[] types                  # List of element types (should all match request)
+geometry_msgs/Pose[] poses      # List of element poses (origin and orientation)

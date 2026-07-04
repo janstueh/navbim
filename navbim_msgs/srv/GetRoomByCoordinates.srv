@@ -1,0 +1,8 @@
+# Request: Robot or point coordinates in IFC frame
+geometry_msgs/Point coordinates
+---
+# Response: Complete floor and room node information
+bool success
+string message
+navbim_msgs/TopomapNode floor_node  # Complete floor data (name, min_z, max_z, etc.)
+navbim_msgs/TopomapNode room_node   # Complete room data (id, name, polygon, bbox, etc.)

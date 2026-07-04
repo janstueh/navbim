@@ -1,0 +1,10 @@
+<!--
+  Simple Behavior Tree for NAV-BIM that only performs path planning.
+-->
+<root BTCPP_format="4" main_tree_to_execute="PlanToPose">
+  <BehaviorTree ID="PlanToPose">
+    <Sequence name="NavigateSequence">
+      <NavbimComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased" error_code_id="{compute_path_error_code}" error_msg="{compute_path_error_msg}"/>
+    </Sequence>
+  </BehaviorTree>
+</root>
