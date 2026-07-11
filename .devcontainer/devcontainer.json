@@ -1,13 +1,13 @@
 {
-    "name": "Nav2",
+    "name": "navbim",
     "build": {
         "dockerfile": "../Dockerfile",
         "context": "..",
         "target": "dever",
-        "cacheFrom": "ghcr.io/ros-navigation/navigation2:jazzy"
+        "cacheFrom": "ghcr.io/janstueh/navbim:jazzy"
     },
     "runArgs": [
-        "--name=nav2",
+        "--name=navbim",
         "--device=/dev/dri", // GPU passthrough for RViz2 (Intel/AMD)
         "--ipc=host" // shared memory transport with host, e.g. rviz GUIs
         // "--cap-add=SYS_PTRACE", // enable debugging, e.g. gdb
