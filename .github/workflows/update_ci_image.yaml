@@ -2,9 +2,10 @@
 name: Update CI Image
 
 on:
+  workflow_dispatch:
   schedule:
-    # 7am UTC, 12am PDT
-    - cron:  '0 7 * * *'
+    # 7am UTC every Monday
+    - cron:  '0 7 * * 1'
   push:
     branches:
       - main
@@ -14,6 +15,10 @@ on:
       - '**/*.repos'
       - 'Dockerfile'
       - '.github/workflows/update_ci_image.yaml'
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   check_ci_files:
@@ -25,7 +30,7 @@ jobs:
     steps:
       - name: "Check package updates"
         id: check
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           echo "trigger=true" >> $GITHUB_OUTPUT
           echo "no_cache=false" >> $GITHUB_OUTPUT
